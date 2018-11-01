@@ -3,4 +3,69 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+
+    <color name="main_color">#f35557</color>
+    <color name="msg_bg">#fe2e55</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="white">#ffffff</color>
+    <color name="gray">#666666</color>
+
+    <color name="black">#000000</color>
+    <color name="black_80per">#80000000</color>
+    <color name="black_40per">#40000000</color>
+    <color name="black_19">#191919</color>
+    <color name="grey_28">#282828</color>
+    <color name="black_33">#333333</color>
+    <color name="black_38">#383838</color>
+    <color name="grey_566267">#566267</color>
+    <color name="grey_80">#808080</color>
+    <color name="grey_99">#999999</color>
+    <color name="grey_ad">#adadad</color>
+    <color name="grey_pressed">#efefef</color>
+    <color name="grey_d3">#d3d3d3</color>
+    <color name="red_ff3d39">#ff3d39</color>
+
+    <color name="green">#018574</color>
+
+    <color name="line_ee">#eeeeee</color>
+    <color name="line_dc">#dcdcdc</color>
+
+    <color name="page_bg">#F2F2F2</color>
+    <color name="textHint">#aeaeae</color>
+
+    <color name="grey_200">#eeeeee</color>
+    <color name="grey_600">#757575</color>
+
+    <color name="lightRed">#FC8E90</color>
+
+    <color name="textHintWhite">#80ffffff</color>
+    <color name="accountBgColor">#50000000</color>
+    <color name="halfBlack">#50000000</color>
+    <color name="black_80">#80000000</color>
+
+    <color name="yellow_f0a13a">#f0a13a</color>
+    <color name="grey_e7">#e7e7e7</color>
+    <color name="grey_f7">#7F7F7F</color>
+    <color name="grey_c0">#c0c0c0</color>
+    <color name="grey_ee">#eeeeee</color>
+    <color name="grey_dd">#dddddd</color>
+
+    <color name="grey_c8">#c8c8c8</color>
+    <color name="grey_f2">#f2f2f2</color>
+    <color name="halfBlue">#5041c3fc</color>
+    <color name="halfRed">#50f35557</color>
+    <color name="grey_ea">#EAEAEA</color>
+
+
+    <color name="image_color_primary">#FFFFFF</color>
+    <color name="image_color_accent">#4CA1FB</color>
+
+    <color name="image_color_white">#FFFFFF</color>
+    <color name="image_color_black">#2B2B2B</color>
+    <color name="image_color_red">#FF5151</color>
+    <color name="image_color_cyan">#20FFCD</color>
+    <color name="image_color_yellow">#FFCC00</color>
+    <color name="image_color_blue">#0078FF</color>
 </resources>
