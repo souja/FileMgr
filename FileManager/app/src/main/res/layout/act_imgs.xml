@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_28"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -48,9 +49,9 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center"
-            android:text="@string/all_imgs"
             android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
+            android:text="@string/all_imgs"
             android:textColor="@color/white"
             android:textSize="12sp" />
     </LinearLayout>

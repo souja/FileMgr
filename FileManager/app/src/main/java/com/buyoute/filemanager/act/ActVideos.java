@@ -18,8 +18,10 @@ import android.widget.TextView;
 import com.buyoute.filemanager.R;
 import com.buyoute.filemanager.adapter.VideoAdapter;
 import com.buyoute.filemanager.base.ActBase;
+import com.buyoute.filemanager.tools.LogUtil;
 import com.buyoute.filemanager.tools.MGlobal;
 import com.buyoute.filemanager.tools.MTool;
+import com.buyoute.filemanager.tools.SPHelper;
 import com.buyoute.filemanager.widget.DirAdapter;
 import com.buyoute.filemanager.widget.DirLayout;
 import com.buyoute.filemanager.widget.MediaBean;
@@ -76,11 +78,12 @@ public class ActVideos extends ActBase {
         if (vDefault.getVisibility() != View.GONE) {
             vDefault.setVisibility(View.GONE);
             vOptions.setVisibility(View.VISIBLE);
-        }else{
-            vDefault.setVisibility(View.GONE);
-            vOptions.setVisibility(View.VISIBLE);
+        } else {
+            vDefault.setVisibility(View.VISIBLE);
+            vOptions.setVisibility(View.GONE);
         }
     }
+
 
     @Override
     public void onCreate() {
@@ -88,10 +91,20 @@ public class ActVideos extends ActBase {
         ButterKnife.bind(this);
 
         instance = this;
-
+        initHideList();
         initVariables();
         initListeners();
         initVideoList();
+    }
+
+    private void initHideList() {
+        String hideListStr = SPHelper.get().getString("hideList");
+        if (hideListStr != null && !hideListStr.isEmpty()) {
+            String[] hidePathArr = hideListStr.split("\\||");
+            for (String path : hidePathArr) {
+                LogUtil.e("hide path:" + path);
+            }
+        }
     }
 
     @Override

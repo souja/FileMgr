@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_28"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <FrameLayout
@@ -15,8 +16,7 @@
         <LinearLayout
             android:id="@+id/layout_default"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="match_parent">
 
             <Button
                 android:id="@+id/btn_selectDir"
@@ -64,7 +64,8 @@
         <LinearLayout
             android:id="@+id/layout_options"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/tv_delete"

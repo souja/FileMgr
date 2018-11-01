@@ -48,12 +48,16 @@ public class VideoAdapter extends MBaseAdapter<String> {
         return mList;
     }
 
-    public void notifyEdit() {
+    private void notifyEdit() {
         bEditMode = !bEditMode;
         if (!bEditMode) {
             selectedPathList.clear();
         }
         notifyDataSetChanged();
+    }
+
+    public List<String> getSelectedPathList() {
+        return selectedPathList;
     }
 
     @Override
