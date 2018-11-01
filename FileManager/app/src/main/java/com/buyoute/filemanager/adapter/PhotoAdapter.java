@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.RequestManager;
 import com.buyoute.filemanager.R;
 import com.buyoute.filemanager.base.BaseHolder;
 import com.buyoute.filemanager.base.CommonItemClickListener;
@@ -51,11 +50,13 @@ public class PhotoAdapter extends MBaseAdapter<String> {
         if (position == 0) {
             GlideApp.with(mContext)
                     .load(R.drawable.ic_camera)
+                    .fitCenter()
                     .into(mHolder.ivPhoto);
         } else {
             String path = mList.get(position - 1);
             GlideApp.with(mContext)
                     .load(path)
+                    .fitCenter()
                     .placeholder(R.drawable.ic_loading_blue)
                     .into(mHolder.ivPhoto);
         }

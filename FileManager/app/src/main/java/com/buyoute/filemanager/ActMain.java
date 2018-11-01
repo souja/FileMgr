@@ -4,13 +4,17 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 
 import com.buyoute.filemanager.act.ActImages;
+import com.buyoute.filemanager.act.ActPrivate;
 import com.buyoute.filemanager.act.ActVideos;
 import com.buyoute.filemanager.adapter.AdapterCategories;
 import com.buyoute.filemanager.base.ActBase;
@@ -24,31 +28,45 @@ import butterknife.ButterKnife;
 public class ActMain extends ActBase {
     @BindView(R.id.rv_cats)
     RecyclerView rvCats;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
 
     @Override
     public void onCreate() {
         setContentView(R.layout.act_main);
         ButterKnife.bind(this);
-
         initScreenParams();
 
-        rvCats.setAdapter(new AdapterCategories(this, str -> {
-            switch (str) {
-                case "图片":
+        rvCats.setAdapter(new AdapterCategories(this, cat_id -> {
+            switch (cat_id) {
+                case R.string.cat_img:
                     NEXT(new Intent(_this, ActImages.class));
                     break;
-                case "视频":
+                case R.string.cat_video:
                     NEXT(new Intent(_this, ActVideos.class));
                     break;
             }
         }));
 
-        if (PermissionChecker.checkSelfPermission(_this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(_this, new String[]{Manifest.permission.CAMERA},
-                    1122);
-        }
+        setSupportActionBar(toolbar);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        findViewById(R.id.layout_private).setOnClickListener(v -> {
+            closeDrawer();
+            NEXT(new Intent(_this, ActPrivate.class));
+        });
+
+    }
+
+    private void closeDrawer() {
+        drawerLayout.closeDrawer(GravityCompat.START);
     }
 
     //初始化屏幕及设备参数
@@ -77,5 +95,4 @@ public class ActMain extends ActBase {
     public void onPermissionGranted() {
 
     }
-
 }

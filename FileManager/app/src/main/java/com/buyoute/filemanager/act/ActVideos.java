@@ -4,18 +4,22 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.buyoute.filemanager.R;
 import com.buyoute.filemanager.adapter.VideoAdapter;
 import com.buyoute.filemanager.base.ActBase;
 import com.buyoute.filemanager.tools.MGlobal;
+import com.buyoute.filemanager.tools.MTool;
 import com.buyoute.filemanager.widget.DirAdapter;
 import com.buyoute.filemanager.widget.DirLayout;
 import com.buyoute.filemanager.widget.MediaBean;
@@ -35,16 +39,26 @@ import butterknife.ButterKnife;
 
 public class ActVideos extends ActBase {
 
-    public final static String KEY_COUNT = "key-count";
     @BindView(R.id.media_list)
     RecyclerView mRecyclerView;
     @BindView(R.id.dir_layout)
     DirLayout mDirLayout;
     @BindView(R.id.tv_curDirName)
     TextView tvCurDir;
+    @BindView(R.id.layout_default)
+    View vDefault;
+    @BindView(R.id.tv_delete)
+    Button tvDelete;
+    @BindView(R.id.tv_hide)
+    Button tvHide;
+    @BindView(R.id.tv_encrypt)
+    Button tvEncrypt;
+    @BindView(R.id.layout_options)
+    View vOptions;
 
     private ArrayMap<String, List<String>> mGroupMap; //包含视频的文件夹
-    private ArrayMap<String, Integer> sizeMap;//k-视频路径，v-视频大小（M）
+    public ArrayMap<String, String> sizeMap;//k-视频路径，v-视频大小（M）
+    public ArrayMap<String, Integer> durationMap;//key-视频路径，value-视频时长（秒）
     private List<String> allVideoPathList;//所有视频的路径
     public List<String> selectedVideoPathList;//已选择的视频路径
     private List<MediaBean> mDirList;//包含视频的文件夹
@@ -56,6 +70,16 @@ public class ActVideos extends ActBase {
 
     public static ActVideos getInstance() {
         return instance;
+    }
+
+    public void notifyMenu() {
+        if (vDefault.getVisibility() != View.GONE) {
+            vDefault.setVisibility(View.GONE);
+            vOptions.setVisibility(View.VISIBLE);
+        }else{
+            vDefault.setVisibility(View.GONE);
+            vOptions.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -83,6 +107,7 @@ public class ActVideos extends ActBase {
     private void initVariables() {
         mGroupMap = new ArrayMap<>();
         sizeMap = new ArrayMap<>();
+        durationMap = new ArrayMap<>();
         allVideoPathList = new ArrayList<>();
         selectedVideoPathList = new ArrayList<>();
         mHandler = new Handler();
@@ -104,12 +129,10 @@ public class ActVideos extends ActBase {
             return;
         }
         new Thread(() -> {
-            ArrayMap<String, Integer> durationMap = new ArrayMap();//key-视频路径，value-视频时长（秒）
-            scanData(durationMap, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-            scanData(durationMap, MediaStore.Video.Media.INTERNAL_CONTENT_URI);
+            scanData(MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+            scanData(MediaStore.Video.Media.INTERNAL_CONTENT_URI);
             mGroupMap.put("所有视频", allVideoPathList);
             mHandler.post(() -> { //扫描视频完成
-                mAdapter.setDurationMap(durationMap);
                 mAdapter.setVideoPathList(allVideoPathList);
                 mDirList = MGlobal.get().subMediaGroup(mGroupMap, true);
                 initDirList();
@@ -117,7 +140,7 @@ public class ActVideos extends ActBase {
         }).start();
     }
 
-    private void scanData(ArrayMap<String, Integer> durMap, Uri uri) {
+    private void scanData(Uri uri) {
         ContentResolver mContentResolver = getContentResolver();
         Cursor mCursor = mContentResolver.query(uri, null,
                 null,
@@ -126,14 +149,14 @@ public class ActVideos extends ActBase {
         while (mCursor.moveToNext()) {
             // 获取视频路径
             String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DATA));
+            allVideoPathList.add(path);
             // 获取视频时长
             long duration = mCursor.getLong(mCursor.getColumnIndex(MediaStore.Video.Media.DURATION));
+            int s = (int) (duration / 1000); //秒
+            durationMap.put(path, s);
             //视频大小(KB)
             long size = mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));
-            sizeMap.put(path, (int) (size / 1024));
-            int s = (int) (duration / 1000); //秒
-            durMap.put(path, s);
-            allVideoPathList.add(path);
+            sizeMap.put(path, MTool.getSize(size));
             // 获取该视频的父路径名
             String dirName = new File(path).getParentFile().getName();
             // 根据父路径名将视频放入到mGruopMap中
@@ -156,11 +179,6 @@ public class ActVideos extends ActBase {
             mDirLayout.dismiss();
         });
         mDirLayout.setAdapter(dirAdapter);
-    }
-
-
-    public ArrayMap<String, Integer> getSizeMap() {
-        return sizeMap;
     }
 
 

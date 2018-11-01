@@ -1,25 +1,37 @@
 <resources>
-    <string name="app_name">FileManager</string>
-    <string name="dir_list">目录列表</string>
+    <string name="app_name" translatable="false">文件管理</string>
 
-    <string name="image_doodle">涂鸦</string>
-    <string name="image_text">文字</string>
-    <string name="image_mosaic">马赛克</string>
-    <string name="image_clip">裁剪</string>
-    <string name="image_reset">还原</string>
-    <string name="image_done">完成</string>
-    <string name="image_cancel">取消</string>
-    <string name="image_rotate">旋转</string>
+    <string name="cat_img" translatable="false">图片</string>
+    <string name="cat_video" translatable="false">视频</string>
+    <string name="cat_music" translatable="false">音乐</string>
+    <string name="cat_doc" translatable="false">文档</string>
 
-    <string name="image_mosaic_tip">请直接在图片上涂抹虚化</string>
-    <string name="image_undo">撤销</string>
-    <string name="image_all_photo">所有照片</string>
-    <string name="image_original">原图</string>
-    <string name="image_preview">预览</string>
-    <string name="image_set">设置比例</string>
-    <string name="edit_img">编辑</string>
-    <string name="sdcard_nosize">暂无外部存储</string>
-    <string name="cur_dir">当前目录：</string>
-    <string name="all_imgs">所有图片</string>
-    <string name="all_videos">所有视频</string>
+    <string name="dir_list" translatable="false">目录列表</string>
+    <string name="image_doodle" translatable="false">涂鸦</string>
+    <string name="image_text" translatable="false">文字</string>
+    <string name="image_mosaic" translatable="false">马赛克</string>
+    <string name="image_clip" translatable="false">裁剪</string>
+    <string name="image_reset" translatable="false">还原</string>
+    <string name="image_done" translatable="false">完成</string>
+    <string name="image_cancel" translatable="false">取消</string>
+    <string name="image_rotate" translatable="false">旋转</string>
+
+    <string name="image_mosaic_tip" translatable="false">请直接在图片上涂抹虚化</string>
+    <string name="image_undo" translatable="false">撤销</string>
+    <string name="image_all_photo" translatable="false">所有照片</string>
+    <string name="image_original" translatable="false">原图</string>
+    <string name="image_preview" translatable="false">预览</string>
+    <string name="image_set" translatable="false">设置比例</string>
+
+    <string name="edit_img" translatable="false">编辑</string>
+    <string name="sdcard_nosize" translatable="false">暂无外部存储</string>
+    <string name="cur_dir" translatable="false">当前目录：</string>
+    <string name="all_imgs" translatable="false">所有图片</string>
+    <string name="all_videos" translatable="false">所有视频</string>
+
+    <string name="navigation_drawer_open" translatable="false">打开侧滑菜单</string>
+    <string name="navigation_drawer_close" translatable="false">关闭侧滑菜单</string>
+    <string name="delete" translatable="false">删除</string>
+    <string name="encrypt" translatable="false">加密</string>
+    <string name="hide" translatable="false">隐藏</string>
 </resources>

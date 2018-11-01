@@ -10,21 +10,22 @@ import android.widget.TextView;
 
 import com.buyoute.filemanager.R;
 import com.buyoute.filemanager.base.BaseHolder;
-import com.buyoute.filemanager.base.CommonItemClickListenerStr;
+import com.buyoute.filemanager.base.CommonItemClickListener;
 
 import butterknife.BindView;
 
 public class AdapterCategories extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-    private final String[] categoryNames = {"图片", "视频", "音乐", "文档"};
+    private final int[] categoryNames = {R.string.cat_img, R.string.cat_video, R.string.cat_music,
+            R.string.cat_doc};
     private final int[] categoryIcons = {R.drawable.ic_img, R.drawable.ic_video,
             R.drawable.ic_music, R.drawable.ic_doc};
 
     private Context mContext;
-    private CommonItemClickListenerStr mListener;
+    private CommonItemClickListener mListener;
 
-    public AdapterCategories(Context context, CommonItemClickListenerStr listener) {
+    public AdapterCategories(Context context, CommonItemClickListener listener) {
         mContext = context;
         mListener = listener;
     }
@@ -41,7 +42,7 @@ public class AdapterCategories extends RecyclerView.Adapter<RecyclerView.ViewHol
         HolderCategory mHolder = (HolderCategory) viewHolder;
         mHolder.tvCatName.setText(categoryNames[i]);
         mHolder.ivCatIcon.setImageResource(categoryIcons[i]);
-        mHolder.itemView.setOnClickListener(v-> mListener.onItemClick(categoryNames[i]));
+        mHolder.itemView.setOnClickListener(v -> mListener.onItemClick(categoryNames[i]));
     }
 
     @Override

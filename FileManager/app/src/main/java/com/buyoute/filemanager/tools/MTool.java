@@ -1,40 +1,24 @@
 package com.buyoute.filemanager.tools;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.model.GlideUrl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +27,16 @@ import java.util.regex.Pattern;
  */
 
 public class MTool {
+
+    public static String getSize(long fileLength) {
+        int size = (int) (fileLength / 1024);//KB
+
+        int mSize = size / 1024;  //M
+
+        if (mSize > 0)
+            return mSize + "M";
+        else return size + "KB";
+    }
 
     public static void Toast(Context context, String msg) {
         if (msg == null || msg.contains("onNext") || context == null) return;

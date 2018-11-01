@@ -91,15 +91,6 @@ public class FileUtil {
 //        return size > 10 * 1024 * 1024; // > 10bm
 //    }
 
-   /* public static String getSize(File file) {
-        int size = (int) (file.length() / 1024);//KB
-        int mSize = size / 1024;  //M
-        if (mSize > 0)
-            return mSize + "M";
-        else return size + "KB";
-
-    }*/
-
     public static void copyFile(File resfile, File tfile) {
         FileInputStream fis = null;
         FileOutputStream fos = null;
