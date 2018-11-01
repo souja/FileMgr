@@ -11,14 +11,13 @@ import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.buyoute.filemanager.R;
 import com.buyoute.filemanager.adapter.VideoAdapter;
 import com.buyoute.filemanager.base.ActBase;
 import com.buyoute.filemanager.tools.LogUtil;
+import com.buyoute.filemanager.tools.MConstant;
 import com.buyoute.filemanager.tools.MGlobal;
 import com.buyoute.filemanager.tools.MTool;
 import com.buyoute.filemanager.tools.SPHelper;
@@ -28,6 +27,7 @@ import com.buyoute.filemanager.widget.MediaBean;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,12 +49,6 @@ public class ActVideos extends ActBase {
     TextView tvCurDir;
     @BindView(R.id.layout_default)
     View vDefault;
-    @BindView(R.id.tv_delete)
-    Button tvDelete;
-    @BindView(R.id.tv_hide)
-    Button tvHide;
-    @BindView(R.id.tv_encrypt)
-    Button tvEncrypt;
     @BindView(R.id.layout_options)
     View vOptions;
 
@@ -62,9 +56,11 @@ public class ActVideos extends ActBase {
     public ArrayMap<String, String> sizeMap;//k-视频路径，v-视频大小（M）
     public ArrayMap<String, Integer> durationMap;//key-视频路径，value-视频时长（秒）
     private List<String> allVideoPathList;//所有视频的路径
-    public List<String> selectedVideoPathList;//已选择的视频路径
     private List<MediaBean> mDirList;//包含视频的文件夹
     private Handler mHandler;
+
+    public List<String> hidePathList;//隐藏的视频路径
+    public String hideStrArr;//隐藏的视频路径
 
     public VideoAdapter mAdapter;
 
@@ -91,20 +87,23 @@ public class ActVideos extends ActBase {
         ButterKnife.bind(this);
 
         instance = this;
-        initHideList();
         initVariables();
         initListeners();
-        initVideoList();
+
+        initHideList();
     }
 
     private void initHideList() {
-        String hideListStr = SPHelper.get().getString("hideList");
-        if (hideListStr != null && !hideListStr.isEmpty()) {
-            String[] hidePathArr = hideListStr.split("\\||");
+        hideStrArr = SPHelper.get().getString(MConstant.HIDE_LIST);
+        LogUtil.e("hideStrArr:" + hideStrArr);
+        if (!hideStrArr.isEmpty()) {
+            String[] hidePathArr = hideStrArr.split("\\|");
             for (String path : hidePathArr) {
                 LogUtil.e("hide path:" + path);
             }
+            hidePathList.addAll(Arrays.asList(hidePathArr));
         }
+        initVideoList();
     }
 
     @Override
@@ -122,7 +121,7 @@ public class ActVideos extends ActBase {
         sizeMap = new ArrayMap<>();
         durationMap = new ArrayMap<>();
         allVideoPathList = new ArrayList<>();
-        selectedVideoPathList = new ArrayList<>();
+        hidePathList = new ArrayList<>();
         mHandler = new Handler();
         mAdapter = new VideoAdapter(_this, allVideoPathList, position ->
                 NEXT(new Intent(_this, ActVideoPlayer.class)
@@ -131,7 +130,32 @@ public class ActVideos extends ActBase {
     }
 
     private void initListeners() {
+        findViewById(R.id.ib_edit).setOnClickListener(v -> {
+            notifyMenu();
+            mAdapter.notifyEdit();
+        });
         findViewById(R.id.btn_selectDir).setOnClickListener(view -> mDirLayout.notifyVisible());
+        findViewById(R.id.btn_hide).setOnClickListener(view -> {
+            if (mAdapter.getSelectedPathList().size() == 0) {
+                showToast("no file selected");
+                return;
+            }
+            String addStr = "";
+            for (String path : mAdapter.getSelectedPathList()) {
+                addStr += "|" + path;
+                allVideoPathList.remove(path);
+                mAdapter.removeItem(path);
+            }
+            LogUtil.e("addStr=" + addStr);
+            if (hideStrArr.isEmpty()) {//之前没有存过
+                addStr = addStr.replaceFirst("\\|", "");
+            }
+            hideStrArr += addStr;
+            LogUtil.e("new hideStrArr:" + hideStrArr);
+            SPHelper.get().putString(MConstant.HIDE_LIST, hideStrArr);
+            mAdapter.getSelectedPathList().clear();
+            mAdapter.notifyDataSetChanged();
+        });
     }
 
 
@@ -162,23 +186,27 @@ public class ActVideos extends ActBase {
         while (mCursor.moveToNext()) {
             // 获取视频路径
             String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DATA));
-            allVideoPathList.add(path);
-            // 获取视频时长
-            long duration = mCursor.getLong(mCursor.getColumnIndex(MediaStore.Video.Media.DURATION));
-            int s = (int) (duration / 1000); //秒
-            durationMap.put(path, s);
-            //视频大小(KB)
-            long size = mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));
-            sizeMap.put(path, MTool.getSize(size));
-            // 获取该视频的父路径名
-            String dirName = new File(path).getParentFile().getName();
-            // 根据父路径名将视频放入到mGruopMap中
-            if (!mGroupMap.containsKey(dirName)) {
-                List<String> childList = new ArrayList<>();
-                childList.add(path);
-                mGroupMap.put(dirName, childList);
+            if (!hidePathList.contains(path)) {
+                allVideoPathList.add(path);
+                // 获取视频时长
+                long duration = mCursor.getLong(mCursor.getColumnIndex(MediaStore.Video.Media.DURATION));
+                int s = (int) (duration / 1000); //秒
+                durationMap.put(path, s);
+                //视频大小(KB)
+                long size = mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));
+                sizeMap.put(path, MTool.getSize(size));
+                // 获取该视频的父路径名
+                String dirName = new File(path).getParentFile().getName();
+                // 根据父路径名将视频放入到mGruopMap中
+                if (!mGroupMap.containsKey(dirName)) {
+                    List<String> childList = new ArrayList<>();
+                    childList.add(path);
+                    mGroupMap.put(dirName, childList);
+                } else {
+                    mGroupMap.get(dirName).add(path);
+                }
             } else {
-                mGroupMap.get(dirName).add(path);
+                LogUtil.e("跳过hide路径:" + path);
             }
         }
         mCursor.close();

@@ -48,7 +48,7 @@ public class VideoAdapter extends MBaseAdapter<String> {
         return mList;
     }
 
-    private void notifyEdit() {
+    public void notifyEdit() {
         bEditMode = !bEditMode;
         if (!bEditMode) {
             selectedPathList.clear();
@@ -58,6 +58,10 @@ public class VideoAdapter extends MBaseAdapter<String> {
 
     public List<String> getSelectedPathList() {
         return selectedPathList;
+    }
+
+    public void removeItem(String path) {
+        mList.remove(path);
     }
 
     @Override
@@ -100,7 +104,6 @@ public class VideoAdapter extends MBaseAdapter<String> {
         }
 
         mHolder.layoutMask.setOnClickListener(v -> {
-            ActVideos.getInstance().notifyMenu();
             if (selectedPathList.contains(path)) {
                 selectedPathList.remove(path);
             } else {
@@ -110,16 +113,19 @@ public class VideoAdapter extends MBaseAdapter<String> {
         });
 
         mHolder.layoutMask.setOnLongClickListener(v -> {
-            notifyEdit();
             ActVideos.getInstance().notifyMenu();
-            return false;
-        });
-        mHolder.itemView.setOnClickListener(v -> mListener.onItemClick(position));
-
-        mHolder.itemView.setOnLongClickListener(v -> {
             notifyEdit();
             return false;
         });
+
+        mHolder.layoutPreview.setOnClickListener(v -> mListener.onItemClick(position));
+
+        mHolder.layoutPreview.setOnLongClickListener(v -> {
+            ActVideos.getInstance().notifyMenu();
+            notifyEdit();
+            return false;
+        });
+
     }
 
     static class VideoHolder extends BaseHolder {
@@ -133,6 +139,8 @@ public class VideoAdapter extends MBaseAdapter<String> {
         ImageView ivChoose;
         @BindView(R.id.layout_mask)
         FrameLayout layoutMask;
+        @BindView(R.id.layout_preview)
+        View layoutPreview;
 
         VideoHolder(View itemView) {
             super(itemView);
