@@ -34,4 +34,5 @@
     <string name="delete" translatable="false">删除</string>
     <string name="encrypt" translatable="false">加密</string>
     <string name="hide" translatable="false">隐藏</string>
+    <string name="private_files">私密文件</string>
 </resources>
