@@ -47,6 +47,7 @@ public class ActVideoPlayer extends ActBase {
     }
 
     private void play(String path) {
+        JzvdMgr.completeAll();
         JZMediaManager.setDataSource(new JZDataSource(path, ""));
         JZMediaManager.instance().prepare();
         mJzvdStd.setUp(path, "", JzvdStd.SCREEN_WINDOW_NORMAL);

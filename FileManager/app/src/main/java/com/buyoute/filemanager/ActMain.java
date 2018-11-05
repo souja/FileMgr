@@ -1,11 +1,7 @@
 package com.buyoute.filemanager;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,9 +14,9 @@ import com.buyoute.filemanager.act.ActPrivate;
 import com.buyoute.filemanager.act.ActVideos;
 import com.buyoute.filemanager.adapter.AdapterCategories;
 import com.buyoute.filemanager.base.ActBase;
-import com.buyoute.filemanager.tools.LogUtil;
-import com.buyoute.filemanager.tools.MGlobal;
-import com.buyoute.filemanager.tools.MTool;
+import com.buyoute.filemanager.tool.MGlobal;
+import com.buyoute.filemanager.tool.MTool;
+import org.xutils.common.util.LogUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +35,8 @@ public class ActMain extends ActBase {
         setContentView(R.layout.act_main);
         ButterKnife.bind(this);
         initScreenParams();
+
+        FMApp.initDb();
 
         rvCats.setAdapter(new AdapterCategories(this, cat_id -> {
             switch (cat_id) {

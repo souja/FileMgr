@@ -29,10 +29,6 @@ public class DirAdapter extends MBaseAdapter<MediaBean> {
     private int dirIndex;
     private DirClickListener mListener;
 
-    public int getDirIndex() {
-        return dirIndex;
-    }
-
     private RequestManager mRequestManager;
 
     public DirAdapter(Context context, List<MediaBean> list, boolean isVideo, DirClickListener listener) {
@@ -66,6 +62,10 @@ public class DirAdapter extends MBaseAdapter<MediaBean> {
             mListener.onClick(mList.get(position));
             notifyDataSetChanged();
         });
+    }
+
+    public String getCurFolderName() {
+        return mList.get(dirIndex).getFolderName();
     }
 
     static class DirHolder extends BaseHolder {

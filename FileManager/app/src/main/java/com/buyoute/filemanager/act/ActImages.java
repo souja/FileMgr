@@ -5,25 +5,34 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.FileUtils;
+import com.buyoute.filemanager.EncriptDemo;
+import com.buyoute.filemanager.FMApp;
 import com.buyoute.filemanager.R;
 import com.buyoute.filemanager.adapter.PhotoAdapter;
 import com.buyoute.filemanager.base.ActBase;
-import com.buyoute.filemanager.tools.FileUtil;
-import com.buyoute.filemanager.tools.LogUtil;
-import com.buyoute.filemanager.tools.MGlobal;
+import com.buyoute.filemanager.model.OEncryptMedia;
+import com.buyoute.filemanager.tool.DialogFactory;
+import com.buyoute.filemanager.tool.FilePath;
+import com.buyoute.filemanager.tool.FileUtil;
+import com.buyoute.filemanager.tool.LoadingDialog;
+
+import org.xutils.common.util.LogUtil;
+import org.xutils.ex.DbException;
+
+import com.buyoute.filemanager.tool.MDateUtils;
+import com.buyoute.filemanager.tool.MGlobal;
 import com.buyoute.filemanager.widget.DirAdapter;
 import com.buyoute.filemanager.widget.DirLayout;
-import com.buyoute.filemanager.widget.MediaBean;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,23 +52,25 @@ public class ActImages extends ActBase {
     DirLayout dirLayout;
     @BindView(R.id.tv_curDirName)
     TextView tvCurDir;
+    @BindView(R.id.layout_default)
+    View vDefault;
+    @BindView(R.id.layout_options)
+    View vOptions;
 
-    public static final int REQUEST_CODE1 = 10100;
     public static final int REQUEST_CODE2 = 10101;
 
     public ArrayMap<String, List<String>> mPathMap; //key-文件夹名称，value-图片路径List
 
-    public List<String> allImageList;   //所有图片的路径
-    public PhotoAdapter mAdapter;
-
-    private List<MediaBean> mDirList;   //相册目录List
-    private DirAdapter mDirAdapter;
+    public List<String> mListPathAllImg;   //所有图片的路径
+    public PhotoAdapter mPhotoAdapter;
 
     private static ActImages instance;
 
-    public static ActImages getInstance() {
-        return instance;
-    }
+    private Handler handler = new Handler();
+
+    private File cameraFile;
+
+    private LoadingDialog mLoadingDialog;
 
     @Override
     public void onCreate() {
@@ -69,14 +80,12 @@ public class ActImages extends ActBase {
         init();
     }
 
-    private File cameraFile;
-
     private void init() {
-        btnSelectDir.setOnClickListener(view -> dirLayout.notifyVisible());
-
+        initListeners();
+        mLoadingDialog = new LoadingDialog(_this);
         mPathMap = new ArrayMap<>();
-        allImageList = new ArrayList<>();
-        mAdapter = new PhotoAdapter(this, allImageList, position -> {
+        mListPathAllImg = new ArrayList<>();
+        mPhotoAdapter = new PhotoAdapter(this, mListPathAllImg, position -> {
             if (position == 0) {//拍照
                 try {
                     cameraFile = FileUtil.setUpPhotoFile();
@@ -99,11 +108,64 @@ public class ActImages extends ActBase {
                 NEXT(it);
             }
         });
-        mediaList.setAdapter(mAdapter);
+        mediaList.setAdapter(mPhotoAdapter);
         getImages();
     }
 
-    private Handler handler = new Handler();   //处理器
+
+    private void initListeners() {
+        btnSelectDir.setOnClickListener(view -> dirLayout.notifyVisible());
+        findViewById(R.id.ib_edit).setOnClickListener(v -> {
+            notifyMenu();
+            mPhotoAdapter.notifyEdit();
+        });
+        findViewById(R.id.btn_delete).setOnClickListener(view -> {
+            if (mPhotoAdapter.getSelectedPathList().size() == 0) return;
+            DialogFactory.NewDialog(_this, null, "确定删除？",
+                    "确定", (d, i) -> {
+                        d.dismiss();
+                        mLoadingDialog.show();
+                        for (String path : mPhotoAdapter.getSelectedPathList()) {
+                            mListPathAllImg.remove(path);
+                            FileUtils.deleteFile(path);
+                        }
+                        mPhotoAdapter.removeSelected();
+                        mLoadingDialog.dismiss();
+                    }, "取消", (d, i) -> d.dismiss()).show();
+        });
+        findViewById(R.id.btn_encrypt).setOnClickListener(view -> {
+            if (mPhotoAdapter.getSelectedPathList().size() == 0) return;
+            DialogFactory.NewDialog(_this, null, "确定加密？",
+                    "确定", (d, i) -> {
+                        d.dismiss();
+                        mLoadingDialog.show();
+                        for (String path : mPhotoAdapter.getSelectedPathList()) {
+                            File oriFile = new File(path);
+                            String enFileName = oriFile.getName();
+                            LogUtil.e(oriFile.getAbsolutePath());
+
+                            File destFile = new File(FilePath.getEncryptPath(),
+                                    MDateUtils.getCurrentDate2() + enFileName + ".dat");
+                            try {
+                                OEncryptMedia mOEncryptMedia = new OEncryptMedia(destFile);
+                                FMApp.getDBManager().saveOrUpdate(mOEncryptMedia);
+                            } catch (DbException e) {
+                                e.printStackTrace();
+                            }
+
+                            try {
+                                EncriptDemo.encrImg(oriFile, destFile);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            mListPathAllImg.remove(path);
+                            mPhotoAdapter.removeSelected();
+                        }
+                        mLoadingDialog.dismiss();
+                    }, "取消", (d, i) -> d.dismiss()).show();
+        });
+    }
 
     private void getImages() {
         if (!Environment.getExternalStorageState().equals(
@@ -116,24 +178,20 @@ public class ActImages extends ActBase {
         new Thread(() -> {
             scanData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             //通知Handler扫描图片完成
-            mPathMap.put("所有图片", allImageList);
+            mPathMap.put("所有图片", mListPathAllImg);
             handler.post(() -> {
-                mAdapter.setPhotoPathList(allImageList);
-                mDirList = MGlobal.get().subMediaGroup(mPathMap, false);
-                initDirList();
+                mPhotoAdapter.setPhotoPathList(mListPathAllImg);
+                dirLayout.setAdapter(new DirAdapter(this,
+                        MGlobal.get().subMediaGroup(mPathMap, false),
+                        false, mediaBean -> {
+                    String key = mediaBean.getFolderName();
+                    tvCurDir.setText(key);
+                    mPhotoAdapter.setPhotoPathList(mPathMap.get(key));
+                    dirLayout.dismiss();
+                }));
             });
         }).start();
     }
-    private void initDirList() {
-        mDirAdapter = new DirAdapter(this, mDirList, false, mediaBean -> {
-            String key = mediaBean.getFolderName();
-            tvCurDir.setText(key);
-            mAdapter.setPhotoPathList(mPathMap.get(key));
-            dirLayout.dismiss();
-        });
-        dirLayout.setAdapter(mDirAdapter);
-    }
-
 
     private void scanData(Uri uri) {
         ContentResolver mContentResolver = getContentResolver();
@@ -143,10 +201,9 @@ public class ActImages extends ActBase {
             // 获取图片的路径
             String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.Media.DATA));
 
-            allImageList.add(path);
+            mListPathAllImg.add(path);
             // 获取该图片的父路径名
-            String parentName = new File(path).getParentFile()
-                    .getName();
+            String parentName = new File(path).getParentFile().getName();
             // 根据父路径名将图片放入到mGruopMap中
             if (!mPathMap.containsKey(parentName)) {
                 List<String> childList = new ArrayList<>();
@@ -164,11 +221,11 @@ public class ActImages extends ActBase {
         //添加到图库
         AddPicToScan(editPath);
 
-        String curFolder = mDirList.get(mDirAdapter.getDirIndex()).getFolderName();
+        String curFolder = dirLayout.getCurFolderName();
         LogUtil.e("curFolder : " + curFolder);
         mPathMap.get(curFolder).add(editPath);//添加到数据源
         //添加到当前图片目录
-        mAdapter.addPath(editPath);
+        mPhotoAdapter.addPath(editPath);
     }
 
     private void AddPicToScan(String path) {
@@ -177,6 +234,20 @@ public class ActImages extends ActBase {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
+    }
+
+    public void notifyMenu() {
+        if (vDefault.getVisibility() != View.GONE) {
+            vDefault.setVisibility(View.GONE);
+            vOptions.setVisibility(View.VISIBLE);
+        } else {
+            vDefault.setVisibility(View.VISIBLE);
+            vOptions.setVisibility(View.GONE);
+        }
+    }
+
+    public static ActImages getInstance() {
+        return instance;
     }
 
     @Override

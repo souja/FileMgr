@@ -10,20 +10,18 @@ import android.provider.MediaStore;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.buyoute.filemanager.R;
 import com.buyoute.filemanager.adapter.VideoAdapter;
 import com.buyoute.filemanager.base.ActBase;
-import com.buyoute.filemanager.tools.LogUtil;
-import com.buyoute.filemanager.tools.MConstant;
-import com.buyoute.filemanager.tools.MGlobal;
-import com.buyoute.filemanager.tools.MTool;
-import com.buyoute.filemanager.tools.SPHelper;
+import org.xutils.common.util.LogUtil;
+import com.buyoute.filemanager.tool.MConstant;
+import com.buyoute.filemanager.tool.MGlobal;
+import com.buyoute.filemanager.tool.MTool;
+import com.buyoute.filemanager.tool.SPHelper;
 import com.buyoute.filemanager.widget.DirAdapter;
 import com.buyoute.filemanager.widget.DirLayout;
-import com.buyoute.filemanager.widget.MediaBean;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,7 +54,6 @@ public class ActVideos extends ActBase {
     public ArrayMap<String, String> sizeMap;//k-视频路径，v-视频大小（M）
     public ArrayMap<String, Integer> durationMap;//key-视频路径，value-视频时长（秒）
     private List<String> allVideoPathList;//所有视频的路径
-    private List<MediaBean> mDirList;//包含视频的文件夹
     private Handler mHandler;
 
     public List<String> hidePathList;//隐藏的视频路径
@@ -66,24 +63,9 @@ public class ActVideos extends ActBase {
 
     private static ActVideos instance;
 
-    public static ActVideos getInstance() {
-        return instance;
-    }
-
-    public void notifyMenu() {
-        if (vDefault.getVisibility() != View.GONE) {
-            vDefault.setVisibility(View.GONE);
-            vOptions.setVisibility(View.VISIBLE);
-        } else {
-            vDefault.setVisibility(View.VISIBLE);
-            vOptions.setVisibility(View.GONE);
-        }
-    }
-
-
     @Override
     public void onCreate() {
-        setContentView(R.layout.act_select_media);
+        setContentView(R.layout.act_videos);
         ButterKnife.bind(this);
 
         instance = this;
@@ -106,14 +88,19 @@ public class ActVideos extends ActBase {
         initVideoList();
     }
 
-    @Override
-    public void onPermissionDisable() {
 
+    public static ActVideos getInstance() {
+        return instance;
     }
 
-    @Override
-    public void onPermissionGranted() {
-
+    public void notifyMenu() {
+        if (vDefault.getVisibility() != View.GONE) {
+            vDefault.setVisibility(View.GONE);
+            vOptions.setVisibility(View.VISIBLE);
+        } else {
+            vDefault.setVisibility(View.VISIBLE);
+            vOptions.setVisibility(View.GONE);
+        }
     }
 
     private void initVariables() {
@@ -171,8 +158,14 @@ public class ActVideos extends ActBase {
             mGroupMap.put("所有视频", allVideoPathList);
             mHandler.post(() -> { //扫描视频完成
                 mAdapter.setVideoPathList(allVideoPathList);
-                mDirList = MGlobal.get().subMediaGroup(mGroupMap, true);
-                initDirList();
+                mDirLayout.setAdapter(new DirAdapter(_this,
+                        MGlobal.get().subMediaGroup(mGroupMap, true),
+                        true, mediaBean -> {
+                    String key = mediaBean.getFolderName();
+                    tvCurDir.setText(key);
+                    mAdapter.setVideoPathList(mGroupMap.get(key));
+                    mDirLayout.dismiss();
+                }));
             });
         }).start();
     }
@@ -212,14 +205,14 @@ public class ActVideos extends ActBase {
         mCursor.close();
     }
 
-    private void initDirList() {
-        DirAdapter dirAdapter = new DirAdapter(_this, mDirList, true, mediaBean -> {
-            String key = mediaBean.getFolderName();
-            tvCurDir.setText(key);
-            mAdapter.setVideoPathList(mGroupMap.get(key));
-            mDirLayout.dismiss();
-        });
-        mDirLayout.setAdapter(dirAdapter);
+    @Override
+    public void onPermissionDisable() {
+
+    }
+
+    @Override
+    public void onPermissionGranted() {
+
     }
 
 

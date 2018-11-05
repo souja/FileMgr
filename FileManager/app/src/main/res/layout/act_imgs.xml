@@ -7,54 +7,106 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/layout_bot"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_alignParentBottom="true">
 
-        <Button
-            android:id="@+id/btn_selectDir"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layout_default"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginRight="40dp"
+            android:layout_marginEnd="40dp">
+
+            <Button
+                android:id="@+id/btn_selectDir"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/trans_half_trans_bg_selector"
+                android:gravity="center"
+                android:minWidth="90dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/dir_list"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:text="@string/cur_dir"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_curDirName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="4dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:text="@string/all_imgs"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_options"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="40dp"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btn_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/trans_half_trans_bg_selector"
+                android:text="@string/delete"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btn_hide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/trans_half_trans_bg_selector"
+                android:text="@string/hide"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btn_encrypt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/trans_half_trans_bg_selector"
+                android:text="@string/encrypt"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/ib_edit"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
             android:background="@drawable/trans_half_trans_bg_selector"
-            android:gravity="center"
-            android:minWidth="90dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="@string/dir_list"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:gravity="center"
-            android:text="@string/cur_dir"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/tv_curDirName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="4dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"
-            android:text="@string/all_imgs"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-    </LinearLayout>
+            android:scaleType="center"
+            android:src="@drawable/ic_edit" />
+    </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/media_list"

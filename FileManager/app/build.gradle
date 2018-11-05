@@ -39,6 +39,7 @@ dependencies {
     api 'io.reactivex.rxjava2:rxandroid:2.0.2'
     api 'com.blankj:utilcode:1.11.1'
     implementation project(':jiaozivideoplayer')
+    api 'com.google.code.gson:gson:2.8.2'
 }
 
 tasks.withType(JavaCompile) {

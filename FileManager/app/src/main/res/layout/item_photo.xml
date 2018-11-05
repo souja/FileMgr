@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/iv_photo"
         android:layout_width="match_parent"
-        android:layout_height="120dp"/>
-</LinearLayout>
+        android:layout_height="120dp" />
+
+    <FrameLayout
+        android:id="@+id/layout_mask"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/black_80per"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_choose"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_uncheck" />
+    </FrameLayout>
+
+</FrameLayout>

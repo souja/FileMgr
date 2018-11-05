@@ -5,9 +5,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 
 import com.buyoute.filemanager.R;
 
@@ -15,7 +16,7 @@ import com.buyoute.filemanager.R;
  * Created by Ydz on 2017/3/16 0016.
  */
 
-public class DirLayout extends RelativeLayout {
+public class DirLayout extends LinearLayout {
 
     public DirLayout(Context context) {
         super(context);
@@ -34,6 +35,7 @@ public class DirLayout extends RelativeLayout {
 
     private RecyclerView mRecyclerView;
     private Animation show, hide;
+    private View menuView;
 
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.widget_dir_layout, this);
@@ -57,10 +59,55 @@ public class DirLayout extends RelativeLayout {
             }
         });
         setOnClickListener(view -> dismiss());
+        setOnLongClickListener(view -> {
+            notifyEdit();
+            if (mListener != null) mListener.notifyEdit(bEditMode);
+            return false;
+        });
+        findViewById(R.id.btn_delete).setOnClickListener(view -> {
+            if (mListener != null)
+                mListener.onDelete();
+        });
+        findViewById(R.id.btn_encrypt).setOnClickListener(view -> {
+            if (mListener != null)
+                mListener.onEncrypt();
+        });
     }
 
+    private DirLayoutListener mListener;
+
+    public void setDListener(DirLayoutListener listener) {
+        mListener = listener;
+    }
+
+    public String getCurFolderName() {
+        return mAdapter.getCurFolderName();
+    }
+
+    public interface DirLayoutListener {
+        void notifyEdit(boolean bEdit);
+
+        void onDelete();
+
+        void onEncrypt();
+    }
+
+    private boolean bEditMode;
+
+    private void notifyEdit() {
+        bEditMode = !bEditMode;
+        if (bEditMode) {
+            menuView.setVisibility(VISIBLE);
+        } else {
+            menuView.setVisibility(GONE);
+        }
+    }
+
+    private DirAdapter mAdapter;
+
     public void setAdapter(DirAdapter adapter) {
-        mRecyclerView.setAdapter(adapter);
+        mAdapter = adapter;
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     public boolean isShowing() {

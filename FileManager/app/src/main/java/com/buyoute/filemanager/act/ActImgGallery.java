@@ -3,7 +3,6 @@ package com.buyoute.filemanager.act;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -17,9 +16,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.buyoute.filemanager.R;
 import com.buyoute.filemanager.base.ActBase;
-import com.buyoute.filemanager.tools.FilePath;
-import com.buyoute.filemanager.tools.LogUtil;
-import com.buyoute.filemanager.tools.MDateUtils;
+import com.buyoute.filemanager.tool.FilePath;
+import org.xutils.common.util.LogUtil;
+import com.buyoute.filemanager.tool.MDateUtils;
 import com.buyoute.filemanager.widget.HackyViewPager;
 
 import java.io.File;
@@ -81,7 +80,7 @@ public class ActImgGallery extends ActBase {
         Intent it = getIntent();
         index = it.getIntExtra(ActImgGallery.IMAGES_INDEX, 1);
 
-        mListAll.addAll(ActImages.getInstance().mAdapter.getPathList());
+        mListAll.addAll(ActImages.getInstance().mPhotoAdapter.getPathList());
 
         updateImgIndex();
     }
