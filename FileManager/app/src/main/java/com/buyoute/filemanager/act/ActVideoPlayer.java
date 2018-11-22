@@ -46,6 +46,7 @@ public class ActVideoPlayer extends ActBase {
 
         VideoAdapterPlay mAdapter = new VideoAdapterPlay(_this, videoPathList,
                 position -> play(getVideoPath(position)));
+        mAdapter.setDurationMap(ActVideos.getInstance().durationMap);
         mRecyclerView.setAdapter(mAdapter);
     }
 

@@ -31,7 +31,7 @@ public class VideoAdapterPlay extends MBaseAdapter<String> {
     private CommonItemClickListener mListener;
     private ArrayMap<String, Integer> durationMap;
     private int playIndex;
-    private int colorGreen, colorWhite;
+    private int colorPlaying, colorCommen;
 
     public void setPlayIndex(int index) {
         playIndex = index;
@@ -46,8 +46,8 @@ public class VideoAdapterPlay extends MBaseAdapter<String> {
         super(context, list);
         mListener = listener;
         Resources res = mContext.getResources();
-        colorGreen = res.getColor(R.color.green);
-        colorWhite = res.getColor(R.color.white);
+        colorPlaying = res.getColor(R.color.image_color_red);
+        colorCommen = res.getColor(R.color.black_33);
     }
 
     public void setVideoPathList(List<String> pathList) {
@@ -78,9 +78,9 @@ public class VideoAdapterPlay extends MBaseAdapter<String> {
         }
 
         if (playIndex == position) {
-            mHolder.mTextView.setTextColor(colorGreen);
+            mHolder.mTextView.setTextColor(colorPlaying);
         } else {
-            mHolder.mTextView.setTextColor(colorWhite);
+            mHolder.mTextView.setTextColor(colorCommen);
         }
 
         GlideApp.with(mContext)

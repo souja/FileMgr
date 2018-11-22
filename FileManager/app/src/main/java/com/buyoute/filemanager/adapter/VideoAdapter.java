@@ -79,9 +79,9 @@ public class VideoAdapter extends MBaseAdapter<String> {
                 .load(path)
                 .placeholder(R.drawable.ic_loading_blue)
                 .into(mHolder.mImageView);
-
         if (ActVideos.getInstance().durationMap.containsKey(path)) {
-            mHolder.tvLength.setText(MTool.getVideoLength(ActVideos.getInstance().durationMap.get(path)));
+            int dur = ActVideos.getInstance().durationMap.get(path);
+            mHolder.tvLength.setText(MTool.getVideoLength(dur));
         } else {
             mHolder.tvLength.setText(String.valueOf("??:??"));
         }
