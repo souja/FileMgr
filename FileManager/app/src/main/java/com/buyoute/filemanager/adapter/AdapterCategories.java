@@ -18,9 +18,9 @@ public class AdapterCategories extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     private final int[] categoryNames = {R.string.cat_img, R.string.cat_video, R.string.cat_music,
-            R.string.cat_doc};
+            R.string.cat_doc, R.string.cat_apk};
     private final int[] categoryIcons = {R.drawable.ic_img, R.drawable.ic_video,
-            R.drawable.ic_music, R.drawable.ic_doc};
+            R.drawable.ic_music, R.drawable.ic_doc, R.drawable.ic_and};
 
     private Context mContext;
     private CommonItemClickListener mListener;

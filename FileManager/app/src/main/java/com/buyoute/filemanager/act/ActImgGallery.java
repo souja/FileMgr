@@ -52,28 +52,18 @@ public class ActImgGallery extends ActBase {
     public static final String IMAGES_INDEX = "image4";
 
     @Override
-    public void onCreate() {
-        setContentView(R.layout.activity_gallery);
+    protected int setupViewRes() {
+        return R.layout.activity_gallery;
+    }
+
+    @Override
+    protected void initMain() {
         ButterKnife.bind(this);
 
-        initViews();
-        initIntent();
-        init();
-    }
-
-    @Override
-    public void onPermissionDisable() {
-
-    }
-
-    @Override
-    public void onPermissionGranted() {
-
-    }
-
-    private void initViews() {
         viewPager = findViewById(R.id.gallery_vp);
         btnEditImg = findViewById(R.id.btn_edit);
+        initIntent();
+        init();
     }
 
     private void initIntent() {
@@ -219,4 +209,14 @@ public class ActImgGallery extends ActBase {
         }
     }
 
+
+    @Override
+    public void onPermissionDisable() {
+
+    }
+
+    @Override
+    public void onPermissionGranted() {
+
+    }
 }

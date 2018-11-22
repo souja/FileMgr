@@ -36,4 +36,5 @@
     <string name="hide" translatable="false">隐藏</string>
     <string name="private_files">私密文件</string>
     <string name="waiting">请稍候...</string>
+    <string name="cat_apk">安装包</string>
 </resources>

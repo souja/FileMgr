@@ -30,7 +30,7 @@ public class ActVideoPlayer extends ActBase {
     private List<String> videoPathList;
 
     @Override
-    public void onCreate() {
+    public void initMain() {
         setContentView(R.layout.act_video_player);
         ButterKnife.bind(this);
         Intent it = getIntent();

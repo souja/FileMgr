@@ -36,4 +36,5 @@
     <string name="hide">Hide</string>
     <string name="private_files">Private Files</string>
     <string name="waiting">Progressing...</string>
+    <string name="cat_apk">Apks</string>
 </resources>

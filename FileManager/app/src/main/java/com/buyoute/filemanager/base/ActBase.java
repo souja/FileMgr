@@ -37,13 +37,19 @@ public abstract class ActBase extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
         );
-
         doChecking();
 
         _this = this;
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        onCreate();
+
+        if (setupViewRes() != 0)
+            setContentView(setupViewRes());
+        initMain();
     }
+
+    protected abstract int setupViewRes();
+
+    protected abstract void initMain();
 
     private void doChecking() {
         if (mPermissions.checkPermissions()) {
@@ -76,9 +82,6 @@ public abstract class ActBase extends AppCompatActivity {
         finish();
     }
 
-    public void NEXT(Intent it, int requestCode) {
-        startActivityForResult(it, requestCode);
-    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -129,8 +132,6 @@ public abstract class ActBase extends AppCompatActivity {
                         InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
-
-    public abstract void onCreate();
 
     public abstract void onPermissionDisable();
 

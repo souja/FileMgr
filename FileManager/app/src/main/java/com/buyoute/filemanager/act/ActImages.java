@@ -73,14 +73,15 @@ public class ActImages extends ActBase {
     private LoadingDialog mLoadingDialog;
 
     @Override
-    public void onCreate() {
-        setContentView(R.layout.act_imgs);
-        ButterKnife.bind(this);
-        instance = this;
-        init();
+    protected int setupViewRes() {
+        return R.layout.act_imgs;
     }
 
-    private void init() {
+    @Override
+    protected void initMain() {
+        ButterKnife.bind(this);
+        instance = this;
+
         initListeners();
         mLoadingDialog = new LoadingDialog(_this);
         mPathMap = new ArrayMap<>();
@@ -111,7 +112,6 @@ public class ActImages extends ActBase {
         mediaList.setAdapter(mPhotoAdapter);
         getImages();
     }
-
 
     private void initListeners() {
         btnSelectDir.setOnClickListener(view -> dirLayout.notifyVisible());

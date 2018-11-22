@@ -31,8 +31,12 @@ public class ActMain extends ActBase {
 
 
     @Override
-    public void onCreate() {
-        setContentView(R.layout.act_main);
+    protected int setupViewRes() {
+        return R.layout.act_main;
+    }
+
+    @Override
+    public void initMain() {
         ButterKnife.bind(this);
         initScreenParams();
 

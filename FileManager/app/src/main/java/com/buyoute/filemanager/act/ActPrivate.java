@@ -31,8 +31,12 @@ public class ActPrivate extends ActBase {
     private final String[] cats = {"图片", "视频"};
 
     @Override
-    public void onCreate() {
-        setContentView(R.layout.act_private);
+    protected int setupViewRes() {
+        return R.layout.act_private;
+    }
+
+    @Override
+    protected void initMain() {
         ButterKnife.bind(this);
 
         init();

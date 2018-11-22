@@ -64,14 +64,17 @@ public class ActVideos extends ActBase {
     private static ActVideos instance;
 
     @Override
-    public void onCreate() {
-        setContentView(R.layout.act_videos);
+    protected int setupViewRes() {
+        return R.layout.act_videos;
+    }
+
+    @Override
+    protected void initMain() {
         ButterKnife.bind(this);
 
         instance = this;
         initVariables();
         initListeners();
-
         initHideList();
     }
 
@@ -86,11 +89,6 @@ public class ActVideos extends ActBase {
             hidePathList.addAll(Arrays.asList(hidePathArr));
         }
         initVideoList();
-    }
-
-
-    public static ActVideos getInstance() {
-        return instance;
     }
 
     public void notifyMenu() {
@@ -144,7 +142,6 @@ public class ActVideos extends ActBase {
             mAdapter.notifyDataSetChanged();
         });
     }
-
 
     private void initVideoList() {
         if (!Environment.getExternalStorageState().equals(
@@ -205,6 +202,10 @@ public class ActVideos extends ActBase {
         mCursor.close();
     }
 
+    public static ActVideos getInstance() {
+        return instance;
+    }
+
     @Override
     public void onPermissionDisable() {
 
@@ -214,7 +215,6 @@ public class ActVideos extends ActBase {
     public void onPermissionGranted() {
 
     }
-
 
     @Override
     protected void onDestroy() {
