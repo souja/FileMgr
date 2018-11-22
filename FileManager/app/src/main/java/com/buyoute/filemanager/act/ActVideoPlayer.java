@@ -30,19 +30,22 @@ public class ActVideoPlayer extends ActBase {
     private List<String> videoPathList;
 
     @Override
-    public void initMain() {
-        setContentView(R.layout.act_video_player);
+    protected int setupViewRes() {
+        return R.layout.act_video_player;
+    }
+
+    @Override
+    protected void initMain() {
         ButterKnife.bind(this);
         Intent it = getIntent();
-
         int index = it.getIntExtra("index", 0);
+
         videoPathList = ActVideos.getInstance().mAdapter.getPathList();
 
         play(getVideoPath(index));
 
-        VideoAdapterPlay mAdapter = new VideoAdapterPlay(_this, videoPathList, position -> {
-            play(getVideoPath(position));
-        });
+        VideoAdapterPlay mAdapter = new VideoAdapterPlay(_this, videoPathList,
+                position -> play(getVideoPath(position)));
         mRecyclerView.setAdapter(mAdapter);
     }
 
