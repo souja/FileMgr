@@ -24,7 +24,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:textColor="@color/black_33"
+            android:textColor="@color/white"
             android:textSize="14sp" />
 
         <TextView
@@ -34,7 +34,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:textColor="@color/black_33"
+            android:textColor="@color/white"
             android:textSize="14sp" />
 
     </LinearLayout>
