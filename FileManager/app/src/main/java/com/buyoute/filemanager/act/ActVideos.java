@@ -172,7 +172,7 @@ public class ActVideos extends ActBase {
         Cursor mCursor = mContentResolver.query(uri, null,
                 null,
                 null,
-                MediaStore.Images.Media.DATE_MODIFIED);
+                MediaStore.Video.Media.DATE_MODIFIED);
         while (mCursor.moveToNext()) {
             // 获取视频路径
             String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DATA));

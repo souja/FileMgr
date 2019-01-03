@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 
+import com.buyoute.filemanager.act.ActAudios;
 import com.buyoute.filemanager.act.ActImages;
 import com.buyoute.filemanager.act.ActPrivate;
 import com.buyoute.filemanager.act.ActVideos;
@@ -49,6 +50,9 @@ public class ActMain extends ActBase {
                     break;
                 case R.string.cat_video:
                     NEXT(new Intent(_this, ActVideos.class));
+                    break;
+                case R.string.cat_music:
+                    NEXT(new Intent(_this, ActAudios.class));
                     break;
             }
         }));

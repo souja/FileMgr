@@ -43,6 +43,9 @@
             android:name=".act.ActVideos"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".act.ActAudios"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".act.ActApks"
             android:screenOrientation="portrait" />
         <activity

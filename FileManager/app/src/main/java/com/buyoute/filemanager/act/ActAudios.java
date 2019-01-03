@@ -13,20 +13,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.buyoute.filemanager.R;
-import com.buyoute.filemanager.adapter.VideoAdapter;
+import com.buyoute.filemanager.adapter.AudioAdapter;
 import com.buyoute.filemanager.base.ActBase;
-import com.buyoute.filemanager.tool.MConstant;
+import com.buyoute.filemanager.model.OMusic;
 import com.buyoute.filemanager.tool.MGlobal;
-import com.buyoute.filemanager.tool.MTool;
-import com.buyoute.filemanager.tool.SPHelper;
 import com.buyoute.filemanager.widget.DirAdapter;
 import com.buyoute.filemanager.widget.DirLayout;
 
-import org.xutils.common.util.LogUtil;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -51,22 +46,19 @@ public class ActAudios extends ActBase {
     @BindView(R.id.layout_options)
     View vOptions;
 
-    private ArrayMap<String, List<String>> mGroupMap; //包含视频的文件夹
+    private ArrayMap<String, List<OMusic>> mGroupMap; //包含视频的文件夹
     public ArrayMap<String, String> sizeMap;//k-视频路径，v-视频大小（M）
     public ArrayMap<String, Integer> durationMap;//key-视频路径，value-视频时长（秒）
-    private List<String> allVideoPathList;//所有视频的路径
+    private List<OMusic> allVideoPathList;//所有视频的路径
     private Handler mHandler;
 
-    public List<String> hidePathList;//隐藏的视频路径
-    public String hideStrArr;//隐藏的视频路径
-
-    public VideoAdapter mAdapter;
+    public AudioAdapter mAdapter;
 
     private static ActAudios instance;
 
     @Override
     protected int setupViewRes() {
-        return R.layout.act_videos;
+        return R.layout.act_audios;
     }
 
     @Override
@@ -75,21 +67,8 @@ public class ActAudios extends ActBase {
 
         instance = this;
         initVariables();
+        initAudioList();
         initListeners();
-        initHideList();
-    }
-
-    private void initHideList() {
-        hideStrArr = SPHelper.get().getString(MConstant.HIDE_LIST);
-        LogUtil.e("hideStrArr:" + hideStrArr);
-        if (!hideStrArr.isEmpty()) {
-            String[] hidePathArr = hideStrArr.split("\\|");
-            for (String path : hidePathArr) {
-                LogUtil.e("hide path:" + path);
-            }
-            hidePathList.addAll(Arrays.asList(hidePathArr));
-        }
-        initVideoList();
     }
 
     public void notifyMenu() {
@@ -107,9 +86,8 @@ public class ActAudios extends ActBase {
         sizeMap = new ArrayMap<>();
         durationMap = new ArrayMap<>();
         allVideoPathList = new ArrayList<>();
-        hidePathList = new ArrayList<>();
         mHandler = new Handler();
-        mAdapter = new VideoAdapter(_this, allVideoPathList, position ->
+        mAdapter = new AudioAdapter(_this, allVideoPathList, position ->
                 NEXT(new Intent(_this, ActVideoPlayer.class)
                         .putExtra("index", position)));
         mRecyclerView.setAdapter(mAdapter);
@@ -121,43 +99,22 @@ public class ActAudios extends ActBase {
             mAdapter.notifyEdit();
         });
         findViewById(R.id.btn_selectDir).setOnClickListener(view -> mDirLayout.notifyVisible());
-        findViewById(R.id.btn_hide).setOnClickListener(view -> {
-            if (mAdapter.getSelectedPathList().size() == 0) {
-                showToast("no file selected");
-                return;
-            }
-            String addStr = "";
-            for (String path : mAdapter.getSelectedPathList()) {
-                addStr += "|" + path;
-                allVideoPathList.remove(path);
-                mAdapter.removeItem(path);
-            }
-            LogUtil.e("addStr=" + addStr);
-            if (hideStrArr.isEmpty()) {//之前没有存过
-                addStr = addStr.replaceFirst("\\|", "");
-            }
-            hideStrArr += addStr;
-            LogUtil.e("new hideStrArr:" + hideStrArr);
-            SPHelper.get().putString(MConstant.HIDE_LIST, hideStrArr);
-            mAdapter.getSelectedPathList().clear();
-            mAdapter.notifyDataSetChanged();
-        });
     }
 
-    private void initVideoList() {
+    private void initAudioList() {
         if (!Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
             showToast(getResources().getString(R.string.sdcard_nosize));
             return;
         }
         new Thread(() -> {
-            scanData(MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-            scanData(MediaStore.Video.Media.INTERNAL_CONTENT_URI);
-            mGroupMap.put("所有视频", allVideoPathList);
+            scanData(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+            scanData(MediaStore.Audio.Media.INTERNAL_CONTENT_URI);
+            mGroupMap.put("所有音频", allVideoPathList);
             mHandler.post(() -> { //扫描视频完成
                 mAdapter.setVideoPathList(allVideoPathList);
                 mDirLayout.setAdapter(new DirAdapter(_this,
-                        MGlobal.get().subMediaGroup(mGroupMap, true),
+                        MGlobal.get().subAudioGroup(mGroupMap, true),
                         true, mediaBean -> {
                     String key = mediaBean.getFolderName();
                     tvCurDir.setText(key);
@@ -170,34 +127,62 @@ public class ActAudios extends ActBase {
 
     private void scanData(Uri uri) {
         ContentResolver mContentResolver = getContentResolver();
-        Cursor mCursor = mContentResolver.query(uri, null,
+        String[] projection = {
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.SIZE
+        };
+//         String where =  "mime_type in ('audio/mpeg','audio/x-ms-wma') and bucket_display_name <> 'audio' and is_music > 0 " ;
+
+        Cursor mCursor = mContentResolver.query(uri,
+                projection,
                 null,
                 null,
-                MediaStore.Images.Media.DATE_MODIFIED);
+                MediaStore.Audio.Media.DATE_MODIFIED);
+
+
+        int displayNameCol = mCursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME);
+        int albumCol = mCursor.getColumnIndex(MediaStore.Video.Media.ALBUM);
+        int idCol = mCursor.getColumnIndex(MediaStore.Video.Media._ID);
+        int durationCol = mCursor.getColumnIndex(MediaStore.Video.Media.DURATION);
+        int sizeCol = mCursor.getColumnIndex(MediaStore.Video.Media.SIZE);
+        int artistCol = mCursor.getColumnIndex(MediaStore.Video.Media.ARTIST);
+        int pathCol = mCursor.getColumnIndex(MediaStore.Video.Media.DATA);
+
         while (mCursor.moveToNext()) {
-            // 获取视频路径
-            String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Video.Media.DATA));
-            if (!hidePathList.contains(path)) {
-                allVideoPathList.add(path);
-                // 获取视频时长
-                long duration = mCursor.getLong(mCursor.getColumnIndex(MediaStore.Video.Media.DURATION));
-                int s = (int) (duration / 1000); //秒
-                durationMap.put(path, s);
-                //视频大小(KB)
-                long size = mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));
-                sizeMap.put(path, MTool.getSize(size));
-                // 获取该视频的父路径名
-                String dirName = new File(path).getParentFile().getName();
-                // 根据父路径名将视频放入到mGruopMap中
-                if (!mGroupMap.containsKey(dirName)) {
-                    List<String> childList = new ArrayList<>();
-                    childList.add(path);
-                    mGroupMap.put(dirName, childList);
-                } else {
-                    mGroupMap.get(dirName).add(path);
-                }
+            //标题
+            String title = mCursor.getString(displayNameCol);
+            //专辑
+            String album = mCursor.getString(albumCol);
+            long id = mCursor.getLong(idCol);
+            //Singer
+            String artist = mCursor.getString(artistCol);
+            // 路径
+            String path = mCursor.getString(pathCol);
+            //时长
+            long duration = mCursor.getLong(durationCol);
+            int s = (int) (duration / 1000); //秒
+            durationMap.put(path, s);
+            //大小(KB)
+            long size = mCursor.getLong(sizeCol);
+            // 获取该视频的父路径名
+            String dirName = new File(path).getParentFile().getName();
+
+            OMusic music = new OMusic(id, title, album, duration, size, artist, path);
+
+            allVideoPathList.add(music);
+
+            // 根据父路径名将视频放入到mGruopMap中
+            if (!mGroupMap.containsKey(dirName)) {
+                List<OMusic> childList = new ArrayList<>();
+                childList.add(music);
+                mGroupMap.put(dirName, childList);
             } else {
-                LogUtil.e("跳过hide路径:" + path);
+                mGroupMap.get(dirName).add(music);
             }
         }
         mCursor.close();

@@ -5,6 +5,7 @@ import android.support.v4.util.ArrayMap;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 
+import com.buyoute.filemanager.model.OMusic;
 import com.buyoute.filemanager.widget.MediaBean;
 
 import org.xutils.common.util.LogUtil;
@@ -128,6 +129,36 @@ public class MGlobal {
                 mMediaBean.setFolderName(key);
                 mMediaBean.setMediaCount(value.size());
                 mMediaBean.setTopMediaPath(value.get(0));//获取该组的第1个media的路径
+                if (key.equals(flag))
+                    list.add(0, mMediaBean);
+                else
+                    list.add(mMediaBean);
+            }
+        }
+        return list;
+
+    }
+
+    /**
+     * 组装分组界面GridView的数据源，因为我们扫描手机的时候将图片信息放在HashMap中
+     * 所以需要遍历HashMap将数据组装成List
+     */
+    public List<MediaBean> subAudioGroup(ArrayMap<String, List<OMusic>> groupMap, boolean isVideo) {
+        if (groupMap.size() == 0) {
+            return null;
+        }
+        List<MediaBean> list = new ArrayList<>();
+        Iterator<Map.Entry<String, List<OMusic>>> it = groupMap.entrySet().iterator();
+        String flag = isVideo ? "所有视频" : "所有图片";
+        while (it.hasNext()) {
+            Map.Entry<String, List<OMusic>> entry = it.next();
+            MediaBean mMediaBean = new MediaBean();
+            String key = entry.getKey();
+            List<OMusic> value = entry.getValue();
+            if (value.size() > 0) {
+                mMediaBean.setFolderName(key);
+                mMediaBean.setMediaCount(value.size());
+                mMediaBean.setTopMediaPath(value.get(0).getPath());//获取该组的第1个media的路径
                 if (key.equals(flag))
                     list.add(0, mMediaBean);
                 else
