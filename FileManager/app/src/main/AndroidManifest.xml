@@ -43,6 +43,9 @@
             android:name=".act.ActVideos"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".act.ActEmptyDIrs"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".act.ActVideoPlayer"
             android:configChanges="orientation|screenSize" />
 

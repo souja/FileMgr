@@ -17,10 +17,9 @@ import butterknife.BindView;
 public class AdapterCategories extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-    private final int[] categoryNames = {R.string.cat_img, R.string.cat_video, R.string.cat_music,
-            R.string.cat_doc};
+    private String[] categoryNames ;
     private final int[] categoryIcons = {R.drawable.ic_img, R.drawable.ic_video,
-            R.drawable.ic_music, R.drawable.ic_doc};
+            R.drawable.ic_music, R.drawable.ic_doc,R.drawable.ic_dir};
 
     private Context mContext;
     private CommonItemClickListener mListener;
@@ -28,6 +27,7 @@ public class AdapterCategories extends RecyclerView.Adapter<RecyclerView.ViewHol
     public AdapterCategories(Context context, CommonItemClickListener listener) {
         mContext = context;
         mListener = listener;
+        categoryNames=mContext.getResources().getStringArray(R.array.categories);
     }
 
 
@@ -42,7 +42,7 @@ public class AdapterCategories extends RecyclerView.Adapter<RecyclerView.ViewHol
         HolderCategory mHolder = (HolderCategory) viewHolder;
         mHolder.tvCatName.setText(categoryNames[i]);
         mHolder.ivCatIcon.setImageResource(categoryIcons[i]);
-        mHolder.itemView.setOnClickListener(v -> mListener.onItemClick(categoryNames[i]));
+        mHolder.itemView.setOnClickListener(v -> mListener.onItemClick(i));
     }
 
     @Override

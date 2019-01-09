@@ -1,11 +1,7 @@
 package com.buyoute.filemanager;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 
+import com.buyoute.filemanager.act.ActEmptyDIrs;
 import com.buyoute.filemanager.act.ActImages;
 import com.buyoute.filemanager.act.ActPrivate;
 import com.buyoute.filemanager.act.ActVideos;
@@ -42,12 +39,18 @@ public class ActMain extends ActBase {
 
         rvCats.setAdapter(new AdapterCategories(this, cat_id -> {
             switch (cat_id) {
-                case R.string.cat_img:
+                case 0:
                     NEXT(new Intent(_this, ActImages.class));
                     break;
-                case R.string.cat_video:
+                case 1:
                     NEXT(new Intent(_this, ActVideos.class));
                     break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                default:
+                    NEXT(new Intent(_this, ActEmptyDIrs.class));
             }
         }));
 

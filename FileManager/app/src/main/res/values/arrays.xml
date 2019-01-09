@@ -1,3 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <array name="categories">
+        <item>图片</item>
+        <item>视频</item>
+        <item>音乐</item>
+        <item>文档</item>
+        <item>空文件夹</item>
+    </array>
 </resources>
