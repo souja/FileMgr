@@ -31,7 +31,7 @@ public class ActEmptyDIrs extends ActBase {
         mRecyclerView.setAdapter(mAdapter);
 
         File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
-        new Thread(()->addItem(root)).start();
+        new Thread(() -> addItem(root)).start();
 
         findViewById(R.id.btn_delete).setOnClickListener(v -> {
             for (String s : mList) {
@@ -40,12 +40,20 @@ public class ActEmptyDIrs extends ActBase {
         });
     }
 
+
+    private int dirLevel = 0;
+
     private void addItem(File file) {
         if (file.isDirectory()) {
             for (File f : file.listFiles()) {
                 if (f.length() == 0) {
                     mList.add(f.getAbsolutePath());
                 } else {
+                    dirLevel++;
+                    if (dirLevel > 5) {
+                        dirLevel = 0;
+                        continue;
+                    }
                     if (f.isDirectory()) {
                         addItem(f);
                     }
